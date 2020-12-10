@@ -1,0 +1,121 @@
+<script language="JavaScript" type="text/javascript">
+
+// Нажатие на галочку "согласен с условиями"
+function HorseCard_OrderSign(cardIndex, inputPayStatus)
+{
+	var checkboxId = 'SignOrder_' + cardIndex;
+	var checkbox = document.getElementById(checkboxId);
+	var oldCheckboxState = checkbox.checked;
+
+	// Присваиваем идентификатор карточки
+	document.cardForm.cardId.value = cardIndex;
+
+	// Симулируем подпись договора в зависимости от состояния галочки
+	document.cardForm.orderSigned.value = checkbox.checked ? 1 : 0;
+
+	// Симулируем состояние не оплаченного договора
+	document.cardForm.orderPayed.value = 0;
+
+	jQuery.ajax({
+		url:     'actions/card_sign.php',
+		type:     "POST",
+		dataType: "html",
+		data: jQuery(document.cardForm).serialize(),
+		success: function(response) {
+			// Если пришёл пустой ответ значит на бэкенде ошибка
+			if (response == '') {
+				alert('Ошибка #CS1: Запрос не выполнен');
+				return;
+			}
+
+			// обновляем содержимое карточки целиком
+			storeCardUpdate(cardIndex, response);
+
+			// Изменяем счётчики в зависимости от нового состояния галочки подписи договора
+			checkbox = document.getElementById(checkboxId);
+			var newCheckboxState = checkbox.checked;
+
+			if (newCheckboxState == oldCheckboxState)
+			{
+				if (checkbox.checked) {
+					storeMetricChange('navSigned', 1);
+				} 
+				else if (inputPayStatus == 0) {
+					storeMetricChange('navSigned', -1);
+				}
+
+				if (inputPayStatus == 1) {
+					storeMetricChange('navPayed', -1);
+					storeMetricChange('navAll', 1);					
+				}
+			}
+		},
+		error: function(response) {
+			// Скрипт не найден, выводим сообщение с идентификатором для отладки
+			alert('Ошибка #CS2: Нет соединения с сервером');
+		}
+	});
+}
+
+
+// Нажатие на кнопку "арендовать" или "купить" (имитация оплаты)
+function HorseCard_OrderPay(cardIndex)
+{
+	var checkboxId = 'SignOrder_' + cardIndex;
+	var checkbox = document.getElementById(checkboxId);
+	var oldCheckboxState = checkbox.checked;
+
+	if (!checkbox.checked) {
+		alert('Перед заказом неоходимо согласиться с условиями договора.');
+		return;
+	}
+
+	// Присваиваем идентификатор карточки
+	document.cardForm.cardId.value = cardIndex;
+	
+	// Симулируем подпись договора в зависимости от состояния галочки
+	document.cardForm.orderSigned.value = checkbox.checked ? 1 : 0;
+	
+	// Симулируем состояние оплаченного договора
+	document.cardForm.orderPayed.value = 1;
+
+	jQuery.ajax({
+		url:     'actions/card_pay.php',
+		type:     "POST",
+		dataType: "html",
+		data: jQuery(document.cardForm).serialize(),
+		success: function(response) {
+			// Если пришёл пустой ответ значит на бэкенде ошибка
+			if (response == '') {
+				alert('Ошибка #CP1: Запрос не выполнен');
+				return;
+			}
+
+			// обновляем содержимое карточки целиком
+			storeCardUpdate(cardIndex, response);
+
+			// Изменяем счётчики в зависимости от нового состояния галочки подписи договора
+			checkbox = document.getElementById(checkboxId);
+			var newCheckboxState = checkbox.checked;
+			
+			// Увеличиваем индикатор количества оплаченных заказов
+			if (newCheckboxState) {
+				storeMetricChange('navPayed', 1);
+
+				if (newCheckboxState == oldCheckboxState) {
+					// уменьшаем индикатор количества подписанных, но не оплаченных
+					storeMetricChange('navSigned', -1);
+
+					// Уменьшаем индикатор количества карточек в каталоге
+					storeMetricChange('navAll', -1);
+				}
+			}
+		},
+		error: function(response) {
+			// Скрипт не найден, выводим сообщение с идентификатором для отладки
+			alert('Ошибка #CP2: Нет соединения с сервером');
+		}
+	});
+}
+
+</script>

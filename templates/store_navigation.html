@@ -1,0 +1,47 @@
+<nav>
+<!-- Клиентский каталог -->
+<big>
+	<a href="index.php" title="Клиентский раздел с доступными карточками" <?= $storeNavigation->styleAll ?> >Каталог (<span id="navAll">0</span>)</a>
+</big>
+
+<big>&thinsp; • &thinsp;</big>
+
+<!-- Лошади, которых можно арендовать -->
+<big>
+	<a href="index.php?tag_service=аренда" title="Лошади, которых можно арендовать" <?= $storeNavigation->styleRent ?> >Аренда (<span id="navRent">0</span>)</a>
+</big>
+
+<big>&thinsp; • &thinsp;</big>
+
+<!-- Лошади, которых можно купить -->
+<big>
+	<a href="index.php?tag_service=покупка" title="Лошади, которых можно купить" <?= $storeNavigation->styleBuy ?> >Покупка (<span id="navBuy">0</span>)</a>
+</big>
+
+<big>&thinsp; • &thinsp;</big>
+
+<!-- Подписанные клиентом, но не оплаченные -->
+<big>
+	<a href="index.php?tag_status=договор%20подписан" title="Договоры, которые подписаны, но ещё не оплачены" <?= $storeNavigation->styleSigned ?> >Подписанные (<span id="navSigned">0</span>)</a>
+</big>
+
+<big>&thinsp; • &thinsp;</big>
+
+<!-- Оплаченные клиентом (и другими людьми) -->
+<big>
+	<a href="index.php?tag_status=счёт%20оплачен" title="Договоры, которые подписаны и оплачены" <?= $storeNavigation->stylePayed ?> >Оплаченные (<span id="navPayed">0</span>)</a>
+</big>
+
+<big>&thinsp; • &thinsp;</big>
+
+<!-- Режим админа -->
+<big>
+	<a title="Все карточки добавленные в каталог и невидимые для клиента" href="index.php?mode=admin" <?= $storeNavigation->styleAdmin ?> >Администратор (<span id="navAdmin">0</span>)</a>
+</big>
+</nav>
+
+<!-- Суб-навигатор запроса (его не видно, если запроса нет) -->
+<nav>
+	<?= $storeNavigation->queryCleaner ?>
+	<?= $storeNavigation->queryResult ?>
+</nav>

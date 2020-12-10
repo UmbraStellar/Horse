@@ -1,0 +1,37 @@
+<script language="JavaScript" type="text/javascript">
+
+// Показывает счётчик карточек, доступных для заказа
+var navElementAll = document.getElementById('navAll');
+navElementAll.innerHTML = '<?= $store->availableCount ?>';
+
+// Показывает счётчик карточек, доступных для аренды
+var navElementRent = document.getElementById('navRent');
+navElementRent.innerHTML = '<?= $store->rentCount ?>';
+
+// Показывает счётчик карточек, доступных для покупки
+var navElementBuy = document.getElementById('navBuy');
+navElementBuy.innerHTML = '<?= $store->buyCount ?>';
+
+
+// Показывает счётчик карточек, доступных для заказа
+var navElementAdmin = document.getElementById('navAdmin');
+navElementAdmin.innerHTML = '<?= $store->itemsOnPage ?>';
+
+
+// Показывает счётчик карточек, удовлетворяющих поисковому запросу
+var navElementTag = document.getElementById('navTag');
+
+// Проверяем был ли запрос
+if (navElementTag != null) {
+	navElementTag.innerHTML += ' (<?= $store->requestCount ?>)';
+}
+
+// Показывает счётчик карточек, подписанных но не оплаченных
+var navElementSigned = document.getElementById('navSigned');
+navElementSigned.innerHTML = '<?= $store->signedCount ?>';
+
+// Показывает счётчик карточек, подписанных но не оплаченных
+var navElementPayed = document.getElementById('navPayed');
+navElementPayed.innerHTML = '<?= $store->payedCount ?>';
+
+</script>

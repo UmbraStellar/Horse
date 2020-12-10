@@ -1,0 +1,30 @@
+<!-- Форма для запросов -->
+<form method="post" name="cardForm">
+	<input type='hidden' name='cardId'>
+	<input type='hidden' name='orderSigned'>
+	<input type='hidden' name='orderPayed'>	
+	<input type='hidden' name='clientId' value='<?= $client->id ?>'>
+	<input type='hidden' name='pageUrl' value='<?= $urlStore->full ?>'>
+	<input type='hidden' name='tagService' value='<?= $urlStore->paramTagService ?>'>
+</form>
+
+
+<script language="JavaScript" type="text/javascript">
+
+// Изменение метрики по айди
+function storeMetricChange(id, count) {
+	var element = document.getElementById(id);
+	if (element != null) {
+		element.innerHTML = parseInt(element.innerHTML) + count;
+	}
+}
+
+
+// Обновляем содержимое карточки целиком после выполнения экшенов
+function storeCardUpdate(cardIndex, innerHTML) {
+	var sectionId = 'section_' + cardIndex;
+	var section = document.getElementById(sectionId);
+	section.innerHTML = innerHTML;
+}
+
+</script>

@@ -1,0 +1,77 @@
+<script language="JavaScript" type="text/javascript">
+
+// Нажатие на кнопку исправить карточку (имитируем процесс валидации на бэкенде)
+function HorseCard_CardCorrect(cardIndex)
+{
+	// Присваиваем идентификатор карточки
+	document.cardForm.cardId.value = cardIndex;
+	
+	// Имитируем состояние неподписанного и не оплаченного договора
+	document.cardForm.orderSigned.value = 0;
+	document.cardForm.orderPayed.value = 0;
+
+	jQuery.ajax({
+		url:     'actions/card_correct.php',
+		type:     "POST",
+		dataType: "html",
+		data: jQuery(document.cardForm).serialize(),
+		success: function(response) {
+			// Если пришёл пустой ответ значит на бэкенде ошибка
+			if (response == '') {
+				alert('Ошибка #CC1: Запрос не выполнен');
+				return;
+			}
+
+			// обновляем содержимое карточки целиком
+			storeCardUpdate(cardIndex, response);
+
+			// Увеличиваем индикатор количества карточек в каталоге
+			storeMetricChange('navAll', 1);
+		},
+		error: function(response) {
+			// Скрипт не найден, выводим сообщение с идентификатором для отладки
+			alert('Ошибка #CC2: Нет соединения с сервером');
+		}
+	});
+}
+
+
+// Нажатие на кнопку "вернуть в каталог" (сбрасывает бронь заказчика)
+function HorseCard_OrderReset(cardIndex)
+{
+	// Присваиваем идентификатор карточки
+	document.cardForm.cardId.value = cardIndex;
+	
+	// Имитируем состояние неподписанного и не оплаченного договора
+	document.cardForm.orderSigned.value = 0;
+	document.cardForm.orderPayed.value = 0;
+
+	jQuery.ajax({
+		url:     'actions/card_reset.php',
+		type:     "POST",
+		dataType: "html",
+		data: jQuery(document.cardForm).serialize(),
+		success: function(response) {
+			// Если пришёл пустой ответ значит на бэкенде ошибка
+			if (response == '') {
+				alert('Ошибка #CR1: Запрос не выполнен');
+				return;
+			}
+
+			// обновляем содержимое карточки целиком
+			storeCardUpdate(cardIndex, response);
+			
+			// Уменьшаем индикатор количества оплаченных заказов
+			storeMetricChange('navPayed', -1);
+
+			// Увеличиваем индикатор количества карточек в каталоге для заказа
+			storeMetricChange('navAll', 1);
+		},
+		error: function(response) {
+			// Скрипт не найден, выводим сообщение с идентификатором для отладки
+			alert('Ошибка #CR2: Нет соединения с сервером');
+		}
+	});
+}
+
+</script>

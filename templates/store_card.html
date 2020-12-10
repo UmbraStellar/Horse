@@ -1,0 +1,163 @@
+<section class="horse-item" id="section_<?= $cardId ?>">
+<table cellpadding="7" cellspacing="4" class="horse-card">
+	<tr>
+		<td class="param-photo">
+			<img src="<?= $storeCard->getPhotoFilename() ?>" alt="" />
+		</td>
+		<td class="param-title <?= $storeCard->getItemColorTheme() ?>">
+			<?= $storeCard->getName() ?>
+			&thinsp; • &thinsp; 
+			<?= $storeCard->getPrice() ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Пол: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getGender() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Возраст: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getAge() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Порода: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getBreed() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Характеристика: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getCharacter() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Место рождения: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getHomeland() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Добавлено: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?=  $storeCard->getDateAdded() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Вес: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getWeight() ?></td>
+	</tr>
+	<tr>
+		<td class="param-name <?= $cardDecorator->subClass() ?>">Использование: </td>
+		<td class="param-value <?= $cardDecorator->subClass() ?>"><?= $storeCard->getFeatures() ?></td>
+	</tr>
+
+<?PHP
+
+// Показываем поле стоимости аренды, если режим показа ВСЕ или АРЕНДА
+if (($urlStore->paramTagService == 'аренда') || ($urlStore->paramTagService == '')) {
+	echo '<tr>', PHP_EOL;
+	echo '<td class="param-name ' . $cardDecorator->subClass() . '">Аренда: </td>', PHP_EOL;
+	echo '<td class="param-value ' . $cardDecorator->subClass() . '">' . $storeCard->getPriceRent() . '</td>', PHP_EOL;
+	echo '</tr>', PHP_EOL;
+}
+
+// Показываем поле стоимости покупки, если режим показа ВСЕ или ПОКУПКА
+if (($urlStore->paramTagService == 'покупка') || ($urlStore->paramTagService == '')) {
+	echo '<tr>', PHP_EOL;
+	echo '<td class="param-name ' . $cardDecorator->subClass() . '">Цена покупки: </td>', PHP_EOL;
+	echo '<td class="param-value ' . $cardDecorator->subClass() . '">' . $storeCard->getPriceBuy() . '</td>', PHP_EOL;
+	echo '</tr>', PHP_EOL;
+}
+
+// Дополнительное поле для мониторинга статуса заказа в режиме админа
+
+// В режиме админа выводим статус заказа
+if ($urlStore->paramMode == 'admin') {
+	echo '<tr>', PHP_EOL;
+	echo '<td class="param-name ' . $cardDecorator->subClass() . '">Статус заказа: </td>', PHP_EOL;
+	echo '<td class="param-value ' . $cardDecorator->subClass() . '">' . $storeCard->getOrderStatus() . '</td>', PHP_EOL;
+	echo '</tr>', PHP_EOL;
+}
+// В режиме клиента выводим галочку подписи договора (для теста)
+else {
+	if ($storeCard->orderSigned) {
+		$checkBoxState = ' checked ';
+	} else {
+		$checkBoxState = ' ';
+	}
+	echo '<tr>', PHP_EOL;
+	echo '<td class="param-name ' . $cardDecorator->subClass() . '">Подпись: </td>', PHP_EOL;
+	echo '<td class="param-value ' . $cardDecorator->subClass() . '">', PHP_EOL;
+	echo '<ul class="flex-inner">';
+	echo '<li>';
+	echo '<input type="checkbox" ' . $checkBoxState . ' id="SignOrder_'. $cardId .'" onclick="HorseCard_OrderSign(`'. $cardId .'`, `' . $storeCard->orderPayed . '`)" />', PHP_EOL;
+	echo '</li>';
+	echo '<li>';
+    echo '<label class="flex-label" for="SignOrder_'. $cardId .'">Я СОГЛАСЕН С УСЛОВИЯМИ &thinsp;<a href="'.$root.'documents/horse.pdf" target="_blank">ДОГОВОРА</a></label>', PHP_EOL;
+	echo '</li>';
+	echo '</ul>';
+	echo '</td>', PHP_EOL;
+	echo '</tr>', PHP_EOL;
+}
+
+// Кнопки взаимодействия с карточкой
+
+echo '<tr>', PHP_EOL;
+echo '<td colspan="2" class="param-order">', PHP_EOL;
+
+
+// Если карточка некорректная, выводим кнопку исправить
+if (!$storeCard->correct) {
+	echo '<span class="order-button ' . $storeCard->getItemColorTheme() . '" ';
+	echo 'onclick="HorseCard_CardCorrect(`'. $cardId .'`);" >';
+	echo 'Исправить';
+	echo '</span>';
+}
+// Если карточка правильная, но не находится в процессе выполнения заказа
+elseif (!$storeCard->orderInProcess)
+{
+	if ($urlStore->paramMode <> 'admin') {
+		// Рендерим кнопку Аренды, если можно арендовать
+		if (($storeCard->canRent) && (($urlStore->paramTagService == 'аренда') || ($urlStore->paramTagService == ''))) {
+			echo '<span class="order-button ' . $storeCard->getItemColorTheme() . '" ';
+			echo 'onclick="HorseCard_OrderPay(`'. $cardId .'`);" >';
+			echo 'Арендовать';
+			echo '</span>', PHP_EOL;
+		}
+		// Рендерим кнопку Покупки, если можно купить
+		if (($storeCard->canBuy) && (($urlStore->paramTagService == 'покупка') || ($urlStore->paramTagService == ''))) {
+			echo '<span class="order-button ' . $storeCard->getItemColorTheme() . '" ';
+			echo 'onclick="HorseCard_OrderPay(`'. $cardId .'`);" >';
+			echo 'Купить';
+			echo '</span>', PHP_EOL;
+		}
+	} else {
+		// Рендерим кнопку Аренды, если можно арендовать
+		echo '<span class="order-button ' . $storeCard->getItemColorTheme() . '" ';
+		echo 'onclick="" >';
+		echo 'В каталоге';
+		echo '</span>', PHP_EOL;
+	}
+}
+
+// Если заказ выполняется, рендерим кнопку выполнения
+// Отображаем эту кнопку даже в том случае, если карточка некорректная,
+// подразумевая, что данные могли испортиться или измениться в процессе исполнения
+if ($storeCard->orderInProcess && $storeCard->correct) {
+	if ($urlStore->paramMode == 'admin') {
+		echo '<span class="order-button green-card" ';
+		echo 'onclick="HorseCard_OrderReset(`'. $cardId .'`)" >';
+		echo 'Вернуть в каталог';
+		echo '</span>', PHP_EOL;
+	} else {
+		echo '<span class="order-button green-card" ';
+		echo 'onclick="" >';
+		if ($client->id == $storeCard->clientId) {
+			echo '✓&thinsp; Вы оплатили заказ';
+		} else {
+			echo 'Чужой заказ';
+		}
+		echo '</span>', PHP_EOL;
+	}
+
+}
+
+echo '</td>', PHP_EOL;
+echo '</tr>', PHP_EOL;
+
+?>
+
+</table>
+</section>
