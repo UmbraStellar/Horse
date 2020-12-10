@@ -47,7 +47,7 @@ function LibString_TextToTagList($text, $textDevider, $tagsDevider, $url, $tagUr
 }
 
 
-// Изменяет регистр: первый символ с большой буквы, остальные с маленькой
+// Изменяет регистр первого символа на большую букву
 function LibString_FirstUppercase($text)
 {
 	$first = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8');
@@ -56,7 +56,7 @@ function LibString_FirstUppercase($text)
 }
 
 
-// Возвращает правильное обозначение числа в соответствии с правилами русского языка
+// Возвращает правильное обозначение количества чего-либо в соответствии с правилами русского языка
 function LibString_GetQuantRemark($number, $textOne, $textMany, $textManyAlt)
 {
 	$number = trim($number);
