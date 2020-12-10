@@ -137,12 +137,12 @@ elseif (!$storeCard->orderInProcess)
 // подразумевая, что данные могли испортиться или измениться в процессе исполнения
 if ($storeCard->orderInProcess && $storeCard->correct) {
 	if ($urlStore->paramMode == 'admin') {
-		echo '<span class="order-button green-card" ';
+		echo '<span class="order-button payed-card" ';
 		echo 'onclick="HorseCard_OrderReset(`'. $cardId .'`)" >';
 		echo 'Вернуть в каталог';
 		echo '</span>', PHP_EOL;
 	} else {
-		echo '<span class="order-button green-card" ';
+		echo '<span class="order-button payed-card" ';
 		echo 'onclick="" >';
 		if ($client->id == $storeCard->clientId) {
 			echo '✓&thinsp; Вы оплатили заказ';
