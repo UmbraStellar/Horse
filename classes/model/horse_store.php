@@ -292,15 +292,15 @@ Class HorseStore extends HorseSocial
 	public function getItemColorTheme()
 	{		
 		if ($this->orderSigned && !$this->orderPayed && $this->correct) {
-			return 'black-card';
+			return 'signed-card';
 		}
 		if ($this->orderInProcess && $this->correct) {
-			return 'green-card';
+			return 'payed-card';
 		}
 		if (!$this->correct || !$this->available) {
-			return 'red-card';
+			return 'invalid-card';
 		} else {
-			return 'blue-card';
+			return 'default-card';
 		}
 	}
 
