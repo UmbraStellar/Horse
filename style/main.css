@@ -197,19 +197,19 @@ h3 {
 	opacity: 0.9;
 }
 
-.blue-card {
+.default-card {
 	background-color: #444;
 }
 
-.black-card {
+.signed-card {
 	background-color: #159AFF;
 }
 
-.red-card {
+.invalid-card {
 	background-color: #BD0000;
 }
 
-.green-card {
+.payed-card {
 	background-color: #16B900;
 }
 
